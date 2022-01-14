@@ -30,19 +30,17 @@ class AlienInvasion:
     def run_game(self):
         """Starts the main loop for the game."""
         while True:
-            # We are looking for new events and updating the screen on each pass through the loop.
+            # The main loop checks for user input, updates the position of the ship and any bullets that were fired.
             self._check_events()
-            # The ship's position will be updated and then used by _update_screen() to draw the ship on the screen.
             self.ship.update()
-            # Update the position of all the bullets on each pass through the loop.
-            self.bullets.update()
-
+            self._update_bullets()
+            # The updated positions are then used to draw a new screen.
             self._update_screen()
 
     def _check_events(self):
         """Respond to keypress and mouse events."""
 
-        # A keypress is registered in Pygame as an event and picked up by the pygame.event.get() method.
+        # A keypress is registered in Pygame as an event and picked up by pygame.event.get()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -53,12 +51,12 @@ class AlienInvasion:
 
     def _check_keydown_events(self, event):
         """Respond to a keypress event."""
-        if event.key == pygame.K_RIGHT:
+        if event.key == pygame.K_q:
+            sys.exit()
+        elif event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = True
-        elif event.key == pygame.K_q:
-            sys.exit()
         elif event.key == pygame.K_SPACE:
             self._fire_bullet()
 
@@ -70,9 +68,20 @@ class AlienInvasion:
             self.ship.moving_left = False
 
     def _fire_bullet(self):
-        """Create a new bullet and add it to the bullets group."""
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        """Create a new bullet and add it to the 'bullets' pygame.sprite.Group()"""
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
+
+    def _update_bullets(self):
+        """Update the position of bullets and get rid of old bullets."""
+        # Update the position of each bullet in the 'bullets' group.
+        self.bullets.update()
+
+        # Get rid of bullets that have disappeared.
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
     def _update_screen(self):
         """Code for updating images on the screen, and flip to the new screen."""
