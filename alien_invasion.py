@@ -95,14 +95,6 @@ class AlienInvasion:
 
         self._check_bullet_alien_collisions()
 
-    def _check_fleet_edges(self):
-        """Respond appropriately if any aliens have reached the edges of the screen."""
-        for alien in self.aliens.sprites():
-            if alien.check_edges():
-                # If any of the sprites in the group are at either edge of the screen, call _change_fleet_direction()
-                self._change_fleet_direction()
-                break
-
     def _check_bullet_alien_collisions(self):
         """Respond to bullet-alien collisions."""
         # Check if any of the bullet and alien rects have collided and, if so, remove the bullet and the alien.
@@ -113,6 +105,14 @@ class AlienInvasion:
             # Destroy existing bullets and create a new fleet.
             self.bullets.empty()
             self._create_fleet()
+
+    def _check_fleet_edges(self):
+        """Respond appropriately if any aliens have reached the edges of the screen."""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                # If any of the sprites in the group are at either edge of the screen, call _change_fleet_direction()
+                self._change_fleet_direction()
+                break
 
     def _change_fleet_direction(self):
         """Drop the entire fleet and change the fleet's direction."""
