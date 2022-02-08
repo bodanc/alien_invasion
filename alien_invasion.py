@@ -44,11 +44,10 @@ class AlienInvasion:
             # well as that of the alien fleet.
             self._check_events()
 
-            self.ship.update()
-
-            self._update_bullets()
-
-            self._update_aliens()
+            if self.stats.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
 
             # All updated positions are then used to draw a new screen.
             self._update_screen()
@@ -139,18 +138,21 @@ class AlienInvasion:
         """Helper method to handle a ship hit event: update GameStats (ships_left - 1), reinitialize the player's ship,
         the alien fleet and all the bullets, pause the game for a moment, etc."""
 
-        # Decrement ships_left.
-        self.stats.ships_left -= 1
+        if self.stats.ships_left > 0:
+            # Decrement ships_left.
+            self.stats.ships_left -= 1
 
-        # Remove all remaining aliens and bullets from their respective pygame.sprite.Group().
-        self.aliens.empty()
-        self.bullets.empty()
+            # Remove all remaining aliens and bullets from their respective pygame.sprite.Group().
+            self.aliens.empty()
+            self.bullets.empty()
 
-        # Create a new fleet and center the ship.
-        self._create_fleet()
-        self.ship.center_ship()
+            # Create a new fleet and center the ship.
+            self._create_fleet()
+            self.ship.center_ship()
 
-        sleep(0.5)
+            sleep(0.5)
+        else:
+            self.stats.game_active = False
 
     def _create_fleet(self):
         """Helper method to create the fleet of invading aliens."""
